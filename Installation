@@ -1,0 +1,104 @@
+I want install Nagios XI on redhat 9 for production environment (Azure Cloud). So please provide start to end each and every step for the installation with all commands with its output.
+Act as a Solution architect and refer nagios document for more understanding.
+
+URLS
+ Serch == nagios XI versions
+https://assets.nagios.com/downloads/nagiosxi/versions.php
+
+https://assets.nagios.com/downloads/nagiosxi/2024/xi-2024R1.0.2.tar.gz  --download nagios
+
+https://nagiosenterprises.my.site.com/support/s/article/Manual-Installation-of-Nagios-XI-2024-5d1c3f10#Passwords   -- finalize installtion
+
+https://www.youtube.com/watch?v=wABbn-npdoY   --U tube link for nagios backup restore
+
+
+
+
+
+
+
+	
+**************************************
+Nagios XI version info
+
+cat /usr/local/nagiosxi/var/xiversion
+
+###################################
+# DO NOT DELETE THIS FILE!
+# Nagios XI version information
+###################################
+full=2024R1.0.2
+major=2024
+minor=1.0.2
+releasedate=2024-02-21
+release=60002
+
+
+************************************************
+
+nagios core version 
+# sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+
+
+Nagios Core 4.4.13
+
+************************************************
+
+#Step 3: Register with Red Hat Subscription Management
+1.Register the System:
+
+sudo subscription-manager register --username <your-username> --password <your-password>
+
+#Expected Output:
+
+The system has been registered with ID: <subscription-id>
+
+2.Attach a Subscription:
+
+sudo subscription-manager attach --auto
+
+#Expected Output:
+
+Successfully attached a subscription for: Red Hat Enterprise Linux for x86_64
+
+3.Enable Repositories:
+sudo subscription-manager repos --enable=rhel-9-for-x86_64-baseos-rpms
+sudo subscription-manager repos --enable=rhel-9-for-x86_64-appstream-rpms
+sudo dnf install -y epel-release
+
+#Expected Output:
+
+Installed:
+epel-release-9-1.el9.noarch
+
+**********************
+then installation
+azure admin login
+cd /tmp 
+wget https://assets.nagios.com/downloads/nagiosxi/2024/xi-2024R1.0.2.tar.gz
+
+tar xzf xi-2024R1.0.2.tar.gz
+
+cd nagiosxi
+./fullinstall
+
+*************
+
+
+###backup
+1.through UI  ------>> admin-> local backup archives--> create-->download 
+  copy download backup file localy to /store/backups/nagiosxi  using winscp 
+2.CLI
+
+##.1 for backup of nagios 
+/usr/local/nagiosxi/scripts/backup_xi.sh
+
+
+##restore backup 
+example 
+/usr/local/nagiosxi/scripts/restore_xi.sh /store/backups/nagiosxi/1279411912.tar.gz
+
+cd /tmp/
+wget https://assets.nagios.com/downloads/nagiosxi/scripts/restore_repair.sh
+chmod +x restore_repair.sh
+./restore_repair.sh
