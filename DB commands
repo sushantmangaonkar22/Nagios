@@ -96,7 +96,40 @@ LINES TERMINATED BY '\n';
  	 	 	 	 	 
 /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg	Confige aply by putty	 	 	 	 
 cd /usr/local/nagiosxi/scripts	 	 	 	 
-./reconfigure_nagios.sh	 	 	 	 
+./reconfigure_nagios.sh	 	 
+
+
+=========================
+db query for Nagios alert report: 
+ 
+SELECT
+    nsh.statehistory_id,
+    nsh.instance_id,
+    nsh.state_time,
+    nsh.state_time_usec,
+    nsh.object_id,
+    nsh.state_change,
+    nsh.state,
+    nsh.state_type,
+    nsh.current_check_attempt,
+    nsh.max_check_attempts,
+    nsh.last_state,
+    nsh.last_hard_state,
+    nsh.output,
+    nsh.long_output,
+    nh.alias AS hostname
+FROM
+    nagios_statehistory nsh
+JOIN
+    nagios_hosts nh ON nsh.object_id = nh.host_id
+WHERE
+    nsh.state_time >= '2025-02-19 00:00:00' AND nsh.state_time <= '2025-02-20 23:59:59'
+ORDER BY
+    nsh.state_time DESC
+INTO OUTFILE '/var/lib/mysql-files/nagios_statehistory_with_hostname_2days.csv'
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
  	 	 	 	 	 
  	 	 	 	 	 
  	 	 	 	 	 
