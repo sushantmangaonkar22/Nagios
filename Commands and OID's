@@ -1,0 +1,938 @@
+Nagios Links:
+
+###Migration
+
+###You can use this document to assist with the migration:
+https://nagios.force.com/support/s/article/Best-practices-to-upgrade-OS-with-Nagios-XI
+
+##Licence Information
+https://nagiosenterprises.my.site.com/support/s/article/Nagios-XI-License-Information-dcbee071
+
+
+##Backing Up and Restoring/Migrating Nagios XI
+https://nagiosenterprises.my.site.com/support/s/article/Backing-Up-and-Restoring-Migrating-Nagios-XI-b36feda0
+
+##upgrade instructions
+https://nagios.force.com/support/s/article/Upgrade-Instructions-98ab0b4d
+
+
+
+sudo systemctl stop nagios
+
+sudo systemctl start nagios
+
+sudo systemctl restart nagios
+
+sudo systemctl stop httpd
+
+sudo systemctl status httpd
+
+sudo systemctl stop dynamodb
+
+sudo systemctl  status dynamodb
+
+sudo reboot
+
+systemctl restart apache2
+systemctl status apache2
+/var/www/html
+
+###service command in nagios 
+-t 'BestMatthews' -P 5693  -M 'services' -q 'service=sentinelone,status=running'
+
+-t 'BestMatthews' -P 5693  -M 'services' -q 'service=centrifydc,status=running'
+
+-t 'BestMatthews' -P 5693  -M 'services' -q 'service=zabbix-agent,status=running'
+
+
+***************
+
+databse access details
+Username:root
+Password: @New!pr0xlnote
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| nagios             |
+| nagiosql           |
+| nagiosxi           |
+| performance_schema |
+| test               |
++--------------------+
+7 rows in set (0.00 sec)
+MariaDB [(none)]>
+ 
+sudo mysql -u root -p 
+
+*****************************
+
+## Need to run below command on DB server
+
+###to fetch table size Presents in nagios 
+
+echo "SELECT table_name AS 'Table', round(((data_length + index_length) / 1024 / 1024), 2) 'Size in MB' FROM information_schema.TABLES WHERE table_schema IN ('nagios', 'nagiosql', 'nagiosxi');" | mysql -h 10.164.92.7 -uroot -p'@New!pr0xlnote' --table
+
+echo 'select * from nagios.nagios_servicestatus;' | mysql -h 10.164.92.7 -uroot -p'@New!pr0xlnote' --table > servicestatus.txt
+
+
+echo 'select * from nagios.nagios_objects;' | mysql -h 10.164.92.7 -uroot -p'@New!pr0xlnote' --table > objects.txt
+
+echo 'select * from nagios.nagios_services;' | mysql -h 10.164.92.7 -uroot -p'@New!pr0xlnote' --table > service.txt
+
+echo 'select * from nagios.nagios_hosts;' | mysql -h 10.164.92.7 -uroot -p'@New!pr0xlnote' --table > hosts.txt
+
+C:\Users\smangaon\OneDrive - Stefanini\Documents\Nagios
+
+scp user@20.50.50.50:/home/user/logfile.txt /Users/localuser/Desktop/
+
+scp root@10.164.92.7:/home/Azure_Admin/servicestatus.txt C:\Users\smangaon\OneDrive - Stefanini\Documents\Nagios
+
+
+SHOW GRANTS FOR 'nagios'@'10.164.92.9';
+
+
+**************************************************************************************
+#########Nagios Wizard
+
+#All hosts= NCPA
+
+#Network devices= SNMP V3/v2   #credentials /security protocol/ AES 128/ SHA /SNMPv3 #unselect last checkbox
+
+#ping monitoring= genric wizard
+
+#certificate SSL monitoring= website wizard    
+   ex : https://cert url  --> next--> ip show--> checkbox for ssl certificate--> hostgrp--> contact details-->
+   
+   need to entry of cert url and ip address on nagios app server.
+   Path: vim /etc/hosts
+   
+   EX:  IPaddress    url
+        10.10.10.10  testurl
+
+#add multiple host in monitoring:  bulk host clonning and import monitoring  
+
+if you want to map any services or disk /drive/cpu/memory anything
+ 1.first create templete for this 
+ 2.use wizard bulk host clonning and import monitoring 
+ 3.select server and service which you used for templete---> next->
+    Select Service Templates
+ 4.at last in Import / Cloning Data add host entry seperated by ,
+        field1   field2 field3
+ select Address , name, Display name
+        10.10.10.10,Win-IND-sample1,Win-IND-sample1
+ 5 in optional uncheck --> Replace Parent Host and/or Hostgroup, with the selected
+ 
+#templete--> for service mapping take any one server login with ncpa insert ip and hostname , 
+if you are making templete for disk /cpu/memory  , select specifuc checkbox only which you wants to update on all server. I want to onbord c drive minitoring then I will selct C 
+C drive checkbox and update threshould values for warning and critical all other checkboxes unselected.  --> nxt-->nxt-> hostgrp-->contact-->apply
+
+ 
+================================================
+
+## for custom Dashbord HTML code
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Dashboard for Efficient Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Dashboard for Efficient Monitoring</h1>
+    <h3>Select a Monitoring Option:</h3>
+    <form action="">
+        <select name="monitoringOptions" onchange="location = this.value;">
+            <option value="">Select...</option>
+            <option value="https://nagios.matw.matthewsintl.com/nagiosxi/">Home Page</option>
+            <option value="http://13.232.37.220/nagiosxi/includes/components/xicore/status.php?show=hosts&hoststatustypes=1">Hosts Up</option>
+            <option value="https://nagios.matw.matthewsintl.com/nagiosxi/includes/components/xicore/status.php?&show=hosts&hoststatustypes=4&servicestatustypes=0">Hosts Down</option>
+            <option value="http://13.232.37.220/nagiosxi/includes/components/xicore/status.php?show=services&servicestatustypes=1">Services Up</option>
+            <option value="http://13.232.37.220/nagiosxi/includes/components/xicore/status.php?show=services&servicestatustypes=4">Services Down</option>
+        </select>
+    </form>
+</body>
+</html>
+
+
+*******************************************************************
+
+su -l root
+
+systemctl status npcd
+
+systemctl status nagios
+
+systemctl status crond
+
+sudo systemctl status httpd
+
+systemctl stop npcd
+
+systemctl stop nagios
+
+systemctl stop crond
+
+pkill -9 -u nagios
+
+##command to truncate tables 
+
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks; truncate nagios_hostchecks; truncate nagios_downtimehistory; truncate nagios_commenthistory;' | mysql -u root -p'@New!pr0xlnote' nagios
+
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks; truncate nagios_hostchecks; truncate nagios_downtimehistory; truncate nagios_commenthistory;' | mysql -u root -p'@New!pr0xlnote' nagios
+echo "truncate table xi_events; truncate table xi_meta; truncate table xi_eventqueue;" | mysql -u root -p'@New!pr0xlnote' nagiosxi
+
+=============================================================================================
+##command to repair databases
+
+
+mysqlcheck -f -r -u root -p'@New!pr0xlnote' --all-databases --use-frm |grep -vwE "note"
+
+mysqlcheck -f -r -u root -p'@New!pr0xlnote' --all-databases --use-frm   ---# on db seever run outside db #on db server before logion to database
+
+
+mysqlcheck -f -r -u root -p'i4hsp6KxusdWAnILkaIN' --all-databases --use-frm
+
+systemctl restart mariadb >& /dev/null || systemctl restart mysqld >& /dev/null
+
+###use when alerts are stopped/stucked
+
+/usr/local/nagiosxi/scripts/repair_databases.sh         -- on nagios server to repair database #backend pe da server pe run hoti hai #run directly without stopping services
+
+=========================================================================================
+##DB log file
+cat /var/log/mariadb/mariadb.log
+cat /var/log/mariadb/mariadb.log | grep -i "error"
+
+
+=======================================================================================
+#check latest alerts in nagios CLI
+tail -f /usr/local/nagios/var/nagios.log
+
+date -d @1728626607
+
+
+=======================================================================================
+#Nagios log file path
+
+tail -1000f /usr/local/nagios/var/nagios.log
+grep -i "error" /usr/local/nagios/var/nagios.log
+grep -i "error" /var/log/httpd/error_log
+
+
+
+
+****************
+rm -f /usr/local/nagios/var/rw/nagios.cmd
+rm -f /usr/local/nagios/var/nagios.lock
+rm -f /var/run/nagios.lock
+rm -f /usr/local/nagios/var/ndo.sock
+rm -f /usr/local/nagios/var/ndo2db.lock
+rm -f /var/lib/mrtg/mrtg_l
+rm -f /usr/local/nagiosxi/var/*.lock
+rm -f /usr/local/nagiosxi/tmp/*.lock
+******************
+++
+systemctl restart httpd
+
+systemctl start npcd
+
+systemctl start crond
+
+systemctl start nagios
+********************************************************************
+rm -f /usr/local/nagios/var/rw/nagios.cmd        -- Ok
+rm -f /usr/local/nagios/var/nagios.lock          -- not found
+rm -f /var/run/nagios.lock                       -- present but current path is /run/nagios.lock
+rm -f /usr/local/nagios/var/ndo.sock             -- not found
+rm -f /usr/local/nagios/var/ndo2db.lock          -- not found
+rm -f /var/lib/mrtg/mrtg_l                       -- not found
+rm -f /usr/local/nagiosxi/var/*.lock             -- OK
+rm -f /usr/local/nagiosxi/tmp/*.lock             -- not found
+
+
+*******
+
+##backup
+
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks; truncate nagios_hostchecks; truncate nagios_downtimehistory; truncate nagios_commenthistory;' | mysql -u root -p'@New!pr0xlnote' nagios
+
+mkdir -p /tmp/host_service_backup_31-07-2024/
+
+mysqldump -u root -p'@New!pr0xlnote' nagios nagios_hoststatus nagios_hosts nagios_services nagios_servicestatus nagios_servicechecks nagios_hostchecks nagios_downtimehistory nagios_commenthistory > nagios_backup.sql
+
+
+echo "truncate table xi_events; truncate table xi_meta; truncate table xi_eventqueue;" | mysql -u root -p'@New!pr0xlnote' nagiosxi
+
+mkdir -p /tmp/xi_meta_eventqueue_backup_31-07-2024/
+
+mysqldump -u root -p'@New!pr0xlnote' nagiosxi xi_events xi_meta xi_eventqueue > nagiosxi_backup.sql
+
+
+mkdir -p /tmp/nagios.cmd_backup_31-07-2024/
+
+cp /usr/local/nagios/var/rw/nagios.cmd /tmp/nagios.cmd_backup_31-07-2024/
+
+
+mkdir -p /tmp/lock_backup_31-07-2024/
+
+cp /usr/local/nagiosxi/var/*.lock /tmp/lock_backup_31-07-2024/
+
+***********************************************************************************************
+
+strace -s 1024 -yy -e trace=%desc -o /tmp/network.txt -f $(pgrep php-fpm | xargs -I{} echo -p {} | tr '\n' ' ')
+strace -s 1024 -yy -e trace=%desc -o /tmp/network.txt -f $(pgrep php-fpm | paste -s | sed -e 's/\([0-9]\+\)/-p \1/g' -e 's/\t/ /g')
+
+
+/u01/app/tomcat/banapp-admin/bin/banapp-admin.sh stop
+
+*****************************************************************
+this for slownees: Hello @Satyam Bhardwaj,
+ 
+Let's capture the events when rendering so we can see what is going on:
+ 
+1) Start root shell, and start capture:
+ 
+strace -s 1024 -yy -e trace=%desc -o /tmp/network.txt -f $(pgrep php-fpm | paste -s | sed -e 's/\([0-9]\+\)/-p \1/g' -e 's/\t/ /g')
+ 
+2) Render the Nagios XI service status summary data in the web console:
+ 
+Wait for some time to timeout
+ 
+ 
+Send over the '/tmp/network.txt' when you get a chance by uploading to the case,
+Perry
+
+
+**************************************************
+problem 1
+
+#Alerts didnt received/Alerts Stopped 
+Solution1- File limits default 1024 on db server we increased up to 500000
+
+Solution2=   once restart nagios service
+             sudo systemctl restart nagios
+
+
+#
+
+
+
+*******************************
+apche https 
+nagios
+db
+
+db 
+nagios
+apache httpd
+
+#STOP
+
+sudo systemctl stop httpd/apache2
+sudo systemctl stop nagios
+sudo systemctl stop mariadb
+
+#START
+
+sudo systemctl start mariadb
+sudo systemctl start nagios
+sudo systemctl start httpd
+
+#STATUS
+sudo systemctl status httpd
+sudo systemctl status nagios
+sudo systemctl status mariadb
+
+
+# for sophos service
+systemctl stop sophos-spl-update.service
+systemctl stop sophos-spl-diagnose.service
+systemctl stop sophos-spl.service
+
+systemctl status sophos-spl-update.service
+systemctl status sophos-spl-diagnose.service
+systemctl status sophos-spl.service
+
+*********************************************************************
+
+grep "10.162.160.253" /usr/local/nagios/var/nagios.log
+
+grep "10.162.160.253" /usr/local/nagios/var/nagios.log | awk '/2024-08-18/'
+
+
+grep "2024-08-18" /usr/local/nagios/var/log/nagios.log* | grep "SAU-EBT-RTR01"
+
+grep "SAU-EBT-RTR01" /usr/local/nagios/var/nagios.event.log
+
+grep "SAU-EBT-RTR01" nagios.log
+
+
+
+******************
+issue on 28/08/2024 alert stopped on nagios
+ problem :
+ 240828 15:16:19 [ERROR] mysqld: Table './nagios/nagios_objects' is marked as crashed and last (automatic?) repair failed
+
+Solution:
+check nagios and database logs
+
+cat /var/log/mariadb/mariadb.log
+
+tail -1000f /usr/local/nagios/var/nagios.log
+
+stop httpd
+stop nagios 
+stop mariadb 
+reboot both server nagios and db server
+repair databse 
+repair nagios/nagios_objects table 
+start mariadb
+start nagios
+start httpd
+
+
+
+
+
+
+
+
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| nagios             |
+| nagiosql           |
+| nagiosxi           |
+| performance_schema |
+| test 
+
+
+information_schema
+mysql
+performance_schema
+| test 
+
+
+***********************
+09/04/2024  slowness case update
+
+su -l root
+rm -f /usr/local/nagiosxi/var/components/profile.zip
+wget -O XI_DiagnosticProfile.sh https://assets.nagios.com/downloads/support/XI_DiagnosticProfile.sh
+rm -f /usr/local/nagiosxi/var/components/profile.zip
+chown root XI_DiagnosticProfile.sh
+chmod 700 XI_DiagnosticProfile.sh
+./XI_DiagnosticProfile.sh Support
+
+**********************
+#for making connection between nagios app server and database server there are two changes need to do 
+1. update databse server details on nagios app server. 
+   file path : /usr/local/nagiosxi/html/config.inc.php
+
+2. give privillages on database server for nagios app server "nagios user" and "ip address of database server"
+
+###Check Specific Privileges for a User on a Database: If you want to check the specific privileges for the Nagios user on a particular database, run the following query:
+
+mysql -u root -p
+
+SHOW GRANTS FOR 'nagios_user'@'nagios_server_ip';
+
+MariaDB [(none)]> SHOW GRANTS FOR 'nagios'@'10.164.92.9';
+ERROR 1141 (42000): There is no such grant defined for user 'nagios' on host '10.164.92.9'
+MariaDB [(none)]> SHOW GRANTS FOR 'nagios'@'10.164.92.6';
++-------------------------------------------------------------------------------------------------------------------+
+| Grants for nagios@10.164.92.6                                                                                     |
++-------------------------------------------------------------------------------------------------------------------+
+| GRANT PROCESS ON *.* TO 'nagios'@'10.164.92.6' IDENTIFIED BY PASSWORD '*32D17C440D624ED369A935432AFE1E28F2C98DC6' |
+| GRANT ALL PRIVILEGES ON `nagios`.* TO 'nagios'@'10.164.92.6'                                                      |
++-------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+
+
+#command to give privillages
+GRANT ALL PRIVILEGES ON `nagiosxi`.* TO 'nagios_user'@'192.168.1.100' IDENTIFIED BY PASSWORD 'some_hashed_password';
+
+
+
+*********************************************************************************************************************************************************************
+#####file limits for nagios app server
+
+Let's have you verify the /etc/security/limits.conf and define / update the following settings if they have not been increased / added.
+ 
+#locked memory
+* hard memlock 128
+* soft memlock 128
+ 
+#open files
+* soft nofile 100000
+* hard nofile 100000
+ 
+#max user processes
+* hard nproc 400000
+* soft nproc 400000
+ 
+#stack size
+* hard stack 20480
+* soft stack 20480
+ 
+**If the above examples are smaller than what is set, increase them further on your server and reboot the server so they get loaded.
+ 
+ 
+The max connections to the mysql database are close to being exceeded and when that happens, it will corrupt the database.
+To increase it, follow this article.
+https://nagios.force.com/support/s/article/Max-Connections-in-MySQL-and-MariaDBs-8c830c91
+ 
+ 
+Please add the following to your /etc/my.cnf under the [mysqld] section:
+ 
+ max_allowed_packet=512M
+ 
+ 
+Run these commands to stop the processes, clean and repair the SQL database, and restart the processes. Run them all as root in an SSH session.
+ 
+systemctl stop npcd
+systemctl stop nagios
+systemctl stop crond
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks;' | mysql -u root -pnagiosxi nagios
+echo "truncate table xi_events; truncate table xi_meta; truncate table xi_eventqueue;" | mysql -u root -pnagiosxi nagiosxi
+mysqlcheck -f -r -u root -pnagiosxi --all-databases --use-frm
+systemctl restart mysqld
+rm -f /usr/local/nagios/var/rw/nagios.cmd
+rm -f /usr/local/nagios/var/nagios.lock
+rm -f /var/run/nagios.lock
+rm -f /var/lib/mrtg/mrtg_l
+rm -f /usr/local/nagiosxi/var/*.lock
+rm -f /usr/local/nagiosxi/tmp/*.lock
+systemctl restart httpd
+systemctl start npcd
+systemctl start crond
+systemctl start nagios
+
+=================================================
+##Commands to Check System Limits on Linux
+cat /etc/security/limits.conf  or cat /etc/security/limits.conf
+
+
+
+1. Locked Memory (memlock)
+   ulimit -l     # Soft limit
+   ulimit -H -l  # Hard limit
+
+   
+2. Open Files (nofile)
+   ulimit -n     # Soft limit
+   ulimit -Hn    # Hard limit
+
+
+3. Max User Processes (nproc)
+   ulimit -u     # Soft limit
+   ulimit -Hu    # Hard limit
+
+   
+4. Stack Size (stack)
+   ulimit -s     # Soft limit
+   ulimit -Hs    # Hard limit
+
+
+=====================================================
+#Actuals limits present on old Nagios app server
+
+#locked memory
+
+* hard memlock 128
+
+* soft memlock 128
+
+
+
+#open files
+
+* soft nofile 10000
+
+* hard nofile 10000
+
+root hard nofile 10000
+
+root soft nofile 10000
+
+
+
+#max user processes
+
+
+
+##### Reason for changes : ulimit issue was coming so, nagios support team(case 00010689 opened)  told to change the setting.  changes made on 03/07/2024. changes made by Sushant ########
+#* hard nproc 4096
+* hard nproc 500000
+
+
+##### Reason for changes : ulimit issue was coming so, nagios support team(case 00010689 opened)  told to change the setting.  changes made on 03/07/2024. changes made by Sushant ########
+#* soft nproc 4096
+* soft nproc 500000
+
+
+
+#stack size
+
+* hard stack 20480
+
+* soft stack 20480
+
+
+======================================================================
+##Nagios COntact details
+
+sudo find / -name contacts.cfg
+
+cat /usr/local/nagios/etc/contacts.cfg
+cat /usr/local/nagiosxi/nom/checkpoints/nagioscore/1727421582/contacts.cfg
+
+******************************
+====================================================
+#MIB path 
+ls -l /usr/share/snmp/mibs/
+
+
+=======================================================================================
+#shell script for host group deatils IP and hostname
+
+#!/bin/sh
+hostgroup="access"
+grep -i $hostgroup *.cfg | awk -F" " '{print $1}' | awk -F ':' '{print $1}' > /tmp/$hostgroup.txt
+for i in `cat /tmp/$hostgroup.txt`
+        do
+         address=`cat $i | grep address | awk -F" " '{print $2}'`
+         hostname=`cat $i | grep host_name | awk -F" " '{print $2}'`
+         echo $hostname"_"$address
+         echo $hostname"_"$address >> /tmp/$hostgroup
+
+ done
+==============================
+#!/bin/sh
+hostgroup="access"
+grep -i $hostgroup *.cfg | awk -F" " '{print $1}' | awk -F ':' '{print $1}' > /tmp/$hostgroup.txt
+for i in `cat /tmp/$hostgroup.txt`
+        do
+         address=`cat $i | grep address | awk -F" " '{print $2}'`
+         hostname=`cat $i | grep host_name | awk -F" " '{print $2}'`
+         echo $hostname"_"$address
+         echo $hostname"_"$address >> /tmp/$hostgroup
+
+ done
+
+===============================================
+filename: nagios.cfg
+max_concurrent_checks =250    #orignal 100
+service start stop
+database repair
+server reboot 
+
+===========================================================================
+2) Please run the below command, then upload the "/tmp/CAS-MER-FW01.tar.gz" file to this ticket.
+
+tar czf /tmp/CAS-MER-FW01.tar.gz /usr/local/nagios/share/perfdata/CAS-MER-FW01/
+
+#Once file is uploaded, please delete the file:
+
+rm -f /tmp/CAS-MER-FW01.tar.gz
+
+ 
+3) We noticed that the xi_meta table is huge, will need to truncate this file. As "root", please run:
+
+(Note: If your DB root's password is not "nagiosxi", please change it before running the command)
+
+echo "truncate table xi_meta;" | mysql -u root -p'@New!pr0xlnote' nagiosxi
+
+4) Please edit:
+
+/usr/local/nagios/etc/pnp/npcd.cfg
+
+set:
+
+load_threshold = 60.0
+
+
+5) There are issues with MIB files, we need to move these out of the snmp "mibs" folder.
+
+As "root", please run:
+
+
+mv -f /usr/share/snmp/mibs/VMWARE-ESX-AGENTCAP-MIB.mib /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/VMWARE-ENV-MIB.mib /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/IPMI-PET-Trap-v3_Official.mib /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-SYS-MIB.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-MESH-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-GUEST-LAN-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-DOWNLOAD-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-DOT11-CLIENT-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-DOT11-CLIENT-CALIB-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-CDP-CAPABILITY.my /tmp/MIB
+
+mv -f /usr/share/snmp/mibs/CISCO-LWAPP-AP-CAPABILITY.my /tmp/MIB
+==================================================================================
+
+
+mysqlcheck -f -r -u root -p'@New!pr0xlnote' --all-databases --use-frm |grep -vwE "note"
+
+mysqlcheck -f -r -u root -p'@New!pr0xlnote' --all-databases --use-frm   ---# on db seever run outside db #on db server before logion to database
+
+
+mysqlcheck -f -r -u root -p'i4hsp6KxusdWAnILkaIN' --all-databases --use-frm
+
+========================
+
+/usr/local/nagios/var#
+
+
+snmpwalk -v 2c -c Stefadmin123 172.26.121.11
+
+=========================================
+
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+
+===============================================#BACKUP #MYSQL binlogs =====================================
+binlogs== used for database recovery logs of perticulat timestamp. this logs contains all database operation like insertation/deletation/alter/  etc.
+
+MYSQL binlogs retentation day setting  
+
+cd /var/lib/mysql  -- log file path
+
+cd /etc/mysql/mysql.conf.d 
+
+cat mysqld.cnf
+
+expire_logs_days = 10   #add this line file 
+
+=====================================================================================
+
+/store/backups/nagiosxi  -- nagios local backup storage location
+
+/var/lib/mysql -- binlog files 
+
+/usr/local/nagiosxi/scripts/backup_xi.sh--- for fullbackup execute manually.
+/store/backups/nagiosxi/   -- local nackup location
+/network_backup/Nagiosbackup
+================================================================================
+#STOP
+
+sudo systemctl stop httpd
+sudo systemctl stop nagios
+sudo systemctl stop mariadb
+
+#START
+
+sudo systemctl start mariadb
+sudo systemctl start nagios
+sudo systemctl start httpd
+
+#STATUS
+sudo systemctl status httpd
+sudo systemctl status nagios
+sudo systemctl status mariadb
+
+**************************
+
+su -l root
+
+systemctl status npcd
+
+systemctl status nagios
+
+systemctl status crond
+
+systemctl status httpd
+
+
+systemctl stop npcd
+systemctl stop nagios
+systemctl stop crond
+
+
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks;' | mysql -u root -p'@New!pr0xlnote' nagios
+
+echo 'truncate nagios_hoststatus; truncate nagios_hosts; truncate nagios_services; truncate nagios_servicestatus; truncate nagios_servicechecks;' | mysql -u root -p'i4hsp6KxusdWAnILkaIN' nagios
+echo "truncate table xi_events; truncate table xi_meta; truncate table xi_eventqueue;" | mysql -u root -p'i4hsp6KxusdWAnILkaIN' nagiosxi
+
+mysqlcheck -f -r -u root -p'i4hsp6KxusdWAnILkaIN' --all-databases --use-frm
+
+systemctl restart mysqld
+rm -f /usr/local/nagios/var/rw/nagios.cmd
+rm -f /usr/local/nagios/var/nagios.lock
+rm -f /var/run/nagios.lock
+rm -f /var/lib/mrtg/mrtg_l
+rm -f /usr/local/nagiosxi/var/*.lock
+rm -f /usr/local/nagiosxi/tmp/*.lock
+systemctl restart httpd
+systemctl start npcd
+systemctl start crond
+systemctl start nagios
+
+
+=====================
+etc/security/limits.conf
+
+cp /etc/security/limits.conf /etc/security/limits.conf_backup02102024
+#locked memory
+
+* hard memlock 128
+
+* soft memlock 128
+
+
+
+#open files
+
+* soft nofile 100000
+
+* hard nofile 100000
+
+root hard nofile 100000
+
+root soft nofile 100000
+
+
+
+#max user processes
+
+
+
+##### Reason for changes : ulimit issue was coming so, nagios support team(case 00010689 opened)  told to change the setting.  changes made on 02/10/2024. changes made by Sushant ########
+#* hard nproc 400000
+* hard nproc 500000
+
+
+##### Reason for changes : ulimit issue was coming so, nagios support team(case 00010689 opened)  told to change the setting.  changes made on 02/10/2024. changes made by Sushant ########
+#* soft nproc 400000
+* soft nproc 500000
+
+
+
+#stack size
+
+* hard stack 20480
+
+* soft stack 20480
+
+
+====================
+cp /etc/mysql/mysql.conf.d/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf_backup02102024
+vi /etc/mysql/mysql.conf.d/mysqld.cnf
+
+ max_allowed_packet=512M
+ 
+ 
+ cp /usr/local/nagios/var/rw/nagios.cmd  /usr/local/nagios/var/rw/nagios.cmd_backup
+ cp /var/run/nagios.lock /var/run/nagios.lock_backup
+ cp  /usr/local/nagiosxi/var/event_handler.lock_backup
+ 
+==============================
+/usr/bin/cfgmaker --show-op-down --ifref=nr --noreversedns --if-template=/usr/local/nagiosxi/html/includes/configwizards/switch/template --zero-speed '100000000' --enablesnmpv3 --snmp-options=:161::::3 --username='Stefadmin' --authprotocol='sha' --authpassword='Stefadmin123' --privprotocol='aes' --privpassword='Stefadmin123' --contextengineid=0 '10.130.10.202'
+
+/usr/bin/cfgmaker --show-op-down --ifref=nr --noreversedns --if-template=/usr/local/nagiosxi/html/includes/configwizards/switch/template --zero-speed '100000000' --enablesnmpv3 --snmp-options=:161::::3 --username='admin' --authprotocol='sha' --authpassword='admin123' --privprotocol='aes' --privpassword='admin' --contextengineid=0 '10.130.10.202'
+
+==================================
+snmpwalk -v3  -l authPriv -u Stefadmin -a SHA -A Stefadmin123 -x AES -X Stefadmin123 10.144.252.253 1.3.6.1.2.1.2.2.1.3.1
+
+snmpwalk -t 60 -v3 -u Stefadmin -a SHA -A Stefadmin123 -x AES -X Stefadmin123 10.144.252.253 1.3.6.1.2.1.2.2.1.3.1
+
+38 esxcli system snmp set --engineid 80001234abcd5678ef0123456789abc
+  39 esxcli system snmp set -a SHA1 -x AES128
+  40 ls
+  41 cat secret1
+  42 cat secret2
+  43 esxcli system snmp hash --auth-hash /secret1  --priv-hash /secret2
+  44 esxcli system snmp set --users Stefadmin/eed077493988fe44e90c257e7a3f13eccd3fc7a0/eed077493988fe44e90c257e7a3f13eccd3fc7a0/priv
+  45 esxcli system snmp set --v3targets 10.164.92.6@161/Stefadmin/auth/trap
+  46 esxcli system snmp set –-enable=true
+  47 esxcli system snmp set enable=true
+  48 esxcli system snmp set
+  49 esxcli system snmp set --help
+  50 esxcli system snmp set --enable=true
+  51 history
+PowerShell: Configure SNMP on an ESXi Host · GitHub
+  
+  Configure SNMP On VMware ESXi Using PowerCLI – TheSleepyAdmins
+==============================================================================OID=================================================
+###CISCO SWITCHES
+OID	Parameter
+1.3.6.1.4.1.9.2.1.58.0	Average CPU load for 5 minutes
+1.3.6.1.4.1.9.2.1.8.0	Free memory size
+sysUpTime.0          uptime for switch
+1.3.6.1.4.1.9.2.1.58.0   > #Monitoring CPU on Routers
+1.3.6.1.4.1.9.9.48.1.1.1.6.1 > Monitoring Memory on Routers
+sysUpTime.0  > Uptime on routers  
+1.3.6.1.4.1.9.9.91.1.1.1.1  ##Temperature Sensor Description	
+powerSupplyStatus
+powerSupplyLocationName
+coolingDeviceStatus
+coolingDeviceLocationName
+temperatureProbeReading
+temperatureProbeLocationName
+temperatureProbeUpperCriticalThreshold
+temperatureProbeStatus
+
+1.3.6.1.4.1.9.9.13.1.5.1.3    PSU
+
+
+
+snmpwalk -v3  -l authPriv -u Stefadmin -a SHA -A username -x AES -X password 10.163.144.251 1.3.6.1.4.1.9.9.48.1.1.1.6
+snmpwalk -v3  -l authPriv -u netduserv3 -a SHA -A username -x AES -X password 10.128.112.251 1.3.6.1.4.1.9.2.1.58.0
+snmpwalk -v3  -l authPriv -u Stefadmin -a SHA -A username -x AES -X password 10.128.112.251 powerSupplyStatus
+snmpwalk -v3  -l authPriv -u Stefadmin -a SHA -A username -x AES -X password 10.128.112.251 powerSupplyLocationName
+
+==================================================================================
+#locate ipaddress--
+# ./check_snmp_int.pl -H 10.x.x.x -C Stefadmin -n  --> change ip address
+#find mrtg and mrtg.done files
+#check permission of files 
+
+-rw-r--r-- 1 www-data nagios 814 Oct 26 06:54 /usr/local/nagiosxi/tmp/mrtg-10.147.56.253
+
+root@NagiosServerUbuntu:/# ls -l /usr/local/nagiosxi/tmp/mrtg-10.147.56.253.done
+-rw-r--r-- 1 www-data nagios 0 Oct 26 06:54 /usr/local/nagiosxi/tmp/mrtg-10.147.56.253.done
+
+# rename both of  this files
+mv mrtg-10.147.56.253 mrtg-10.147.56.253.killed
+
+mv mrtg-10.147.56.253 mrtg-10.147.56.253.done.killed
+
+#then use cfgmaker command #try both old and new cred
+
+
+/usr/bin/cfgmaker --show-op-down --ifref=nr --noreversedns --if-template=/usr/local/nagiosxi/html/includes/configwizards/switch/template --zero-speed '100000000' --enablesnmpv3 --snmp-options=:161::::3 --username='Stefadmin' --authprotocol='sha' --authpassword='Stefadmin123' --privprotocol='aes' --privpassword='Stefadmin123' --contextengineid=0 '10.162.160.254'
+
+
+/usr/bin/cfgmaker --show-op-down --ifref=nr --noreversedns --if-template=/usr/local/nagiosxi/html/includes/configwizards/switch/template --zero-speed '100000000' --enablesnmpv3 --snmp-options=:161::::3 --username='netduserv3' --authprotocol='sha' --authpassword='8L6yVHfdwD' --privprotocol='aes' --privpassword='8L6yVHfdwD' --contextengineid=0 '10.168.0.4'
+============================
+
